@@ -1,0 +1,135 @@
+version: "3.8"
+
+# ---------------------------------------------------------------------------
+# Data Pipeline Observability — Docker Compose
+#
+# Services:
+#   postgres       — primary data store
+#   airflow-init   — one-shot initialisation (DB migrate + admin user)
+#   airflow-webserver — Airflow UI on http://localhost:8080
+#   airflow-scheduler — task executor
+#
+# Usage:
+#   docker compose up --build          # first run
+#   docker compose up -d               # subsequent runs (detached)
+#   docker compose down -v             # full teardown incl. volumes
+# ---------------------------------------------------------------------------
+
+x-airflow-common: &airflow-common
+  build:
+    context: .
+    dockerfile: Dockerfile.airflow
+  environment: &airflow-env
+    # Airflow core
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
+    AIRFLOW__CORE__FERNET_KEY: "46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLt0nfdstY="
+    AIRFLOW__WEBSERVER__SECRET_KEY: "pipeline-observability-secret"
+
+    # Database backend for Airflow metadata
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://pipeline_user:pipeline_pass@postgres/airflow_db
+
+    # Pipeline-specific env vars (read by src/ modules)
+    POSTGRES_HOST: postgres
+    POSTGRES_PORT: "5432"
+    POSTGRES_DB: pipeline_db
+    POSTGRES_USER: pipeline_user
+    POSTGRES_PASSWORD: pipeline_pass
+    PIPELINE_CSV_PATH: /opt/airflow/data/sample_transactions.csv
+
+    # Anomaly detection tuning
+    ANOMALY_Z_THRESHOLD: "3.0"
+    FRESHNESS_THRESHOLD_HOURS: "24.0"
+
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./src:/opt/airflow/src
+    - ./data:/opt/airflow/data
+    - ./great_expectations:/opt/airflow/great_expectations
+    - airflow_logs:/opt/airflow/logs
+
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+  restart: unless-stopped
+
+
+services:
+
+  # -------------------------------------------------------------------------
+  # PostgreSQL — stores both Airflow metadata and pipeline data
+  # -------------------------------------------------------------------------
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: pipeline_user
+      POSTGRES_PASSWORD: pipeline_pass
+      # Create both databases on init
+      POSTGRES_MULTIPLE_DATABASES: pipeline_db,airflow_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_postgres.sh:/docker-entrypoint-initdb.d/init_postgres.sh
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pipeline_user -d pipeline_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # -------------------------------------------------------------------------
+  # Airflow initialisation (runs once, exits)
+  # -------------------------------------------------------------------------
+  airflow-init:
+    <<: *airflow-common
+    command: >
+      bash -c "
+        airflow db migrate &&
+        airflow users create \
+          --username admin \
+          --password admin \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com || true
+      "
+    restart: "no"
+
+  # -------------------------------------------------------------------------
+  # Airflow webserver — UI available at http://localhost:8080
+  # -------------------------------------------------------------------------
+  airflow-webserver:
+    <<: *airflow-common
+    command: airflow webserver
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  # -------------------------------------------------------------------------
+  # Airflow scheduler — picks up and executes DAG tasks
+  # -------------------------------------------------------------------------
+  airflow-scheduler:
+    <<: *airflow-common
+    command: airflow scheduler
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+# ---------------------------------------------------------------------------
+# Volumes
+# ---------------------------------------------------------------------------
+volumes:
+  postgres_data:
+    driver: local
+  airflow_logs:
+    driver: local

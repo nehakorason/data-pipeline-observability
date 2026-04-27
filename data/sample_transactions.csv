@@ -1,0 +1,31 @@
+transaction_id,customer_id,amount,currency,merchant,category,timestamp,status
+TXN001,CUST101,150.00,USD,Amazon,retail,2024-01-15 10:23:45,completed
+TXN002,CUST102,2500.00,USD,Apple Store,electronics,2024-01-15 11:05:12,completed
+TXN003,CUST103,45.50,USD,Starbucks,food,2024-01-15 11:30:00,completed
+TXN004,CUST104,899.99,USD,Best Buy,electronics,2024-01-15 12:00:00,completed
+TXN005,CUST105,12.75,USD,McDonald's,food,2024-01-15 12:15:30,completed
+TXN006,CUST106,3200.00,USD,Luxury Hotel,travel,2024-01-15 13:00:00,completed
+TXN007,CUST107,75.00,USD,Shell Gas,fuel,2024-01-15 13:45:00,completed
+TXN008,CUST108,450.00,USD,Delta Airlines,travel,2024-01-15 14:00:00,pending
+TXN009,CUST109,22.00,USD,Netflix,entertainment,2024-01-15 14:30:00,completed
+TXN010,CUST110,18500.00,USD,Car Dealer,automotive,2024-01-15 15:00:00,completed
+TXN011,CUST111,9.99,USD,Spotify,entertainment,2024-01-15 15:15:00,completed
+TXN012,CUST112,340.00,USD,Zara,clothing,2024-01-15 15:45:00,completed
+TXN013,CUST113,1200.00,USD,Dental Clinic,healthcare,2024-01-15 16:00:00,completed
+TXN014,CUST114,55.00,USD,Uber,transport,2024-01-15 16:30:00,completed
+TXN015,CUST115,780.00,USD,Gym Membership,health,2024-01-15 17:00:00,completed
+TXN016,CUST116,4.50,USD,Parking Meter,transport,2024-01-15 17:15:00,completed
+TXN017,CUST117,250.00,USD,Whole Foods,grocery,2024-01-15 17:30:00,completed
+TXN018,CUST118,67.25,USD,CVS Pharmacy,healthcare,2024-01-15 18:00:00,completed
+TXN019,CUST119,95000.00,USD,Real Estate,property,2024-01-15 18:30:00,completed
+TXN020,CUST120,33.00,USD,Domino's Pizza,food,2024-01-15 19:00:00,completed
+TXN021,CUST121,500.00,USD,Home Depot,home,2024-01-15 19:15:00,completed
+TXN022,CUST122,1800.00,USD,Laptop World,electronics,2024-01-15 19:45:00,completed
+TXN023,CUST123,28.00,USD,Cinema,entertainment,2024-01-15 20:00:00,completed
+TXN024,CUST124,620.00,USD,Hotel Marriott,travel,2024-01-15 20:30:00,completed
+TXN025,CUST125,15.00,USD,iTunes,entertainment,2024-01-15 21:00:00,completed
+TXN026,CUST126,380.00,USD,IKEA,home,2024-01-15 21:15:00,completed
+TXN027,CUST127,88.00,USD,Sports Direct,clothing,2024-01-15 21:30:00,completed
+TXN028,CUST128,7.50,USD,Newspaper,media,2024-01-15 22:00:00,completed
+TXN029,CUST129,1450.00,USD,Jewelry Store,luxury,2024-01-15 22:30:00,completed
+TXN030,CUST130,210.00,USD,Electric Bill,utilities,2024-01-15 23:00:00,completed

@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Pytest
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Docker
+*.log
+
+# Great Expectations (generated artefacts)
+great_expectations/validations/
+great_expectations/uncommitted/
+great_expectations/.ge_store_backend_id
+
+# IDE
+.vscode/
+.idea/
+*.swp

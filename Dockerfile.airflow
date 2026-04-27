@@ -1,0 +1,21 @@
+# Dockerfile.airflow
+# -------------------
+# Extends the official Airflow image with project-specific Python dependencies.
+
+FROM apache/airflow:2.9.2-python3.11
+
+USER root
+
+# System-level dependencies (psycopg2 needs libpq)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libpq-dev \
+        gcc \
+    && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+USER airflow
+
+# Copy and install Python requirements
+COPY requirements.txt /requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt

@@ -1,0 +1,76 @@
+{
+  "expectation_suite_name": "transactions_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_table_columns_to_match_set",
+      "kwargs": {
+        "column_set": [
+          "transaction_id",
+          "customer_id",
+          "amount",
+          "currency",
+          "merchant",
+          "category",
+          "timestamp",
+          "status"
+        ],
+        "exact_match": false
+      },
+      "meta": { "notes": "All required columns must be present." }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": { "column": "transaction_id" },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": { "column": "customer_id" },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": { "column": "amount" },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": { "column": "timestamp" },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "amount",
+        "min_value": 0,
+        "max_value": null,
+        "strict_min": true
+      },
+      "meta": { "notes": "All transaction amounts must be strictly positive." }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_unique",
+      "kwargs": { "column": "transaction_id" },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "status",
+        "value_set": ["completed", "pending", "failed", "reversed"]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "currency",
+        "regex": "^[A-Z]{3}$"
+      },
+      "meta": { "notes": "Currency must be a 3-letter ISO code." }
+    }
+  ],
+  "meta": {
+    "great_expectations_version": "0.18.15"
+  }
+}
